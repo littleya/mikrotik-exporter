@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/prometheus/common/version"
+	
 
 	"fmt"
 	"net/http"
@@ -62,12 +62,24 @@ var (
 	shortSha   = "0xDEADBEEF"
 )
 
+var (
+	buildInfo = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "mikrotik_exporter_build_info",
+			Help: "A metric with a constant '1' value labeled with version, revision, and build date of the application.",
+		},
+		[]string{"version", "short_sha"},
+	)
+)
+
 func init() {
-	prometheus.MustRegister(version.NewCollector("mikrotik_exporter"))
+	prometheus.MustRegister(buildInfo)
 }
 
 func main() {
 	flag.Parse()
+
+	buildInfo.WithLabelValues(appVersion, shortSha).Set(1)
 
 	if *ver {
 		fmt.Printf("\nVersion:   %s\nShort SHA: %s\n\n", appVersion, shortSha)
