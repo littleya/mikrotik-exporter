@@ -7,7 +7,8 @@ LDFLAGS=-X main.appVersion=$(VERSION)
 LDFLAGS+=-X main.shortSha=$(SHORTSHA)
 
 build:
-	go build -ldflags "$(LDFLAGS)" .
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o release/mikrotik-exporter-amd64 .
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o release/mikrotik-exporter-arm64 .
 
 utils:
 	go get github.com/mitchellh/gox
